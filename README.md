@@ -8,6 +8,7 @@ The library is non-blocking, and performs connection pooling under the hood for 
 
 ## Dependencies
 
+  - prosody with a working `net.server.addclient` (commited to trunk on December 23 2013)
   - [lua-pb](https://github.com/Neopallium/lua-pb/)
 
 
