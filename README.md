@@ -15,21 +15,20 @@ The library is non-blocking, and performs connection pooling under the hood for 
 
 Use `module:depends` to load this library
 
-### handle = pb.new ( servers [, client_id] )`
+### `handle = pb.new ( servers [, client_id] )`
 
-`servers` is an array of dictionaries with fields:
-
-  - `host` (required string)
-  - `port` (required number)
-  - `sslctx` (optional table)
-  - `max_connections` (optional number)
+  - `servers` is an array of dictionaries with fields:
+	  - `host` (required string)
+	  - `port` (required number)
+	  - `sslctx` (optional table)
+	  - `max_connections` (optional number)
 
 
 ### `handle:rpc ( message_type , data , callback )`
 
-`message_type` is the riak command you want to issue; a list can be found in the [riak documentation](http://docs.basho.com/riak/latest/dev/references/protocol-buffers/)  
-`data` can be `nil` for commands that have no parameters; otherwise it is a   
-`callback` will be called with the response as a single argument or `(nil,err)` in case of error
+  - `message_type` is the riak command you want to issue; a list can be found in the [riak documentation](http://docs.basho.com/riak/latest/dev/references/protocol-buffers/)
+  - `data` can be `nil` for commands that have no parameters; otherwise it is a table that matches the protobuf message
+  - `callback` will be called with the response as a single argument or `(nil,err)` in case of error
 
 
 ## Example
