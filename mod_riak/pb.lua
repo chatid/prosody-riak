@@ -247,8 +247,6 @@ function methods:rpc ( name , args , cb )
 		conn_datas [ conn ].cb = cb
 		conn:write ( bin )
 	else
-		self.queue:push ( { name = name ; data = bin , cb = cb } )
-
 		local connected = 0
 		-- Check if a server isn't at max connections yet
 		for _ , server in ipairs ( self.servers ) do
@@ -257,7 +255,12 @@ function methods:rpc ( name , args , cb )
 			end
 			connected = connected + ( server.connected or 0 )
 		end
-		assert ( connected > 0 , "Unable to connect to a server" )
+
+		if connected == 0 then
+			cb ( nil , "Unable to connect to a server" )
+		else
+			self.queue:push ( { name = name ; data = bin , cb = cb } )
+		end
 	end
 end
 mt.__call = methods.rpc
