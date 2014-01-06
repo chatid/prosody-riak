@@ -230,8 +230,9 @@ end
 
 function methods:process_next ( conn )
 	if self.queue:length ( ) > 0 then
+		local conn_data = assert ( conn_datas [ conn ] , "Unknown connection" )
 		local req = self.queue:pop ( )
-		conn_datas [ conn ].cb = req.cb
+		conn_data.cb = req.cb
 		conn:write ( req.data )
 	else -- Place into available pool
 		self.pool [ conn ] = true
