@@ -1,6 +1,7 @@
 -- Prosody library to talk to riak via protobufs
 -- Uses Neopallium's protobuf library (https://github.com/Neopallium/lua-pb/)
--- Paths to .proto files should be set before loading this file
+
+module:set_global()
 
 local net_server = require "net.server"
 local new_fifo = require "fifo"
@@ -24,7 +25,10 @@ local function read_uint32_be ( str , init )
 		o4 )
 end
 
+prosody.unlock_globals()
 local pb = require "pb"
+-- Set paths to location of .proto files
+pb.path = module.path:match(".*/") .. "riak_pb/src/?.proto;"
 -- Hack as import is not supported yet
 local riak = { }
 for _ , name in ipairs { "riak"; "riak_kv"; "riak_dt"; "riak_search"; "riak_yokozuna"; } do
@@ -33,6 +37,7 @@ for _ , name in ipairs { "riak"; "riak_kv"; "riak_dt"; "riak_search"; "riak_yoko
 		riak [ k ] = v
 	end
 end
+prosody.lock_globals()
 
 local msg_codes = {
 	[0]  = "RpbErrorResp" ;
@@ -198,7 +203,7 @@ local methods = { }
 local mt = {
 	__index = methods ;
 }
-local function new ( servers , client_id )
+function new ( servers , client_id )
 	return setmetatable ( {
 		servers = servers ;
 		client_id = client_id or uuid_gen ( ) ;
@@ -256,8 +261,4 @@ function methods:rpc ( name , args , cb )
 end
 mt.__call = methods.rpc
 
-return {
-	methods = methods ;
-	new = new ;
-}
 
