@@ -187,11 +187,12 @@ function listener.ondisconnect ( conn , reason )
 	conn_datas [ conn ] = nil
 	conn_data.ob.pool [ conn ] = nil
 	local server = conn_data.server
+	log ( "debug" , "Riak connection to %s:%d lost: %s" , server.host , server.port , reason )
 	server.connected = server.connected - 1
 	local cb = conn_data.cb
 	if cb then
 		conn_data.cb = nil
-		log ( "debug" , "Calling callback with nil, %s" , reason )
+		log ( "debug" , "connection has inflight request, callback with nil, %s" , reason )
 		local ok , err = pcall ( cb , nil , reason )
 		if not ok then
 			log ( "error" , "Traceback: %s" , err )
