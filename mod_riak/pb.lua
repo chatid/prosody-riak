@@ -73,7 +73,6 @@ local msg_codes = {
 	[30] = "RpbSetBucketTypeReq" ;
 	[31] = "RpbGetBucketTypeReq" ;
 	[32] = "RpbSetBucketTypeReq" ;
-	[33] = "RpbCounterUpdateResp" ;
 	[40] = "RpbCSBucketReq" ;
 	[41] = "RpbCSBucketResp" ;
 	[50] = "RpbCounterUpdateReq" ;
@@ -91,6 +90,9 @@ local msg_codes = {
 	[81] = "DtFetchResp" ;
 	[82] = "DtUpdateReq" ;
 	[83] = "DtUpdateResp" ;
+	[253]= "RpbAuthReq" ;
+	[254]= "RpbAuthResp" ;
+	[255]= "RpbStartTls" ;
 }
 local parsers = { }
 local constructors = { }
