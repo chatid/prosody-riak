@@ -99,7 +99,12 @@ local constructors = { }
 for code , name in pairs ( msg_codes ) do
 	local msg_type = riak [ name ]
 	if msg_type then
-		parsers [ code ] = msg_type ( )
+		local parser = msg_type ( )
+		parsers [ code ] = function ( buffer , init , max )
+			-- lua-pb keeps trying to parse until end of string
+			-- we have to manually constrict the length
+			return parser:Parse ( buffer:sub ( init , max ) , "binary" , 1 )
+		end
 		constructors [ name ] = function ( ... )
 			local bin = assert ( msg_type ( ... ):Serialize ( ) )
 			return to_uint32_be ( 1 + #bin ) .. string.char ( code ) .. bin
@@ -146,10 +151,9 @@ function listener.onincoming ( conn , data )
 		local parser = parsers [ msg_code ]
 		local res
 		if parser then
-			local data = buffer:sub ( offset + 6 , offset + 4 + length )
 			offset = offset + 4 + length
 			local err
-			res , err = parser:Parse ( data )
+			res , err = parser ( data , offset + 6 , offset + 4 + length )
 			if res == nil then
 				log ( "warn" , "failed to parse protobuf %d response: %s" , msg_code , err )
 				conn:close ( "invalid response object" )
